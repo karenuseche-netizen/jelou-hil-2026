@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Política Human in the Loop — Jelou</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #00b4c8;
+    --teal-dark: #007a8a;
+    --teal-light: #e6f8fa;
+    --navy: #0a2e35;
+    --text: #1a1a1a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f9fafb;
+    --white: #ffffff;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 40px auto 80px;
+    padding: 0 20px;
+  }
+
+  /* PORTADA */
+  .cover {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .cover-top {
+    background: linear-gradient(135deg, var(--navy) 0%, #0e5060 100%);
+    padding: 44px 44px 36px;
+    color: white;
+  }
+  .cover-tag {
+    font-size: 0.67rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 14px;
+  }
+  .cover-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .cover-title span { color: var(--teal); }
+  .cover-sub {
+    font-size: 0.86rem;
+    color: rgba(255,255,255,0.55);
+    font-weight: 300;
+    max-width: 420px;
+    line-height: 1.65;
+  }
+  .cover-meta {
+    background: var(--white);
+    padding: 18px 44px;
+    display: flex;
+    gap: 36px;
+    border-top: 3px solid var(--teal);
+    flex-wrap: wrap;
+  }
+  .meta-label {
+    font-size: 0.63rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .meta-value {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* SECCIONES */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-num {
+    font-size: 0.63rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    background: var(--teal-light);
+    padding: 3px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .sec-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .card-body {
+    padding: 24px 28px;
+  }
+
+  /* TEXTO */
+  p {
+    font-size: 0.875rem;
+    color: #374151;
+    margin-bottom: 12px;
+    line-height: 1.75;
+  }
+  p:last-child { margin-bottom: 0; }
+  p strong { font-weight: 600; color: var(--text); }
+
+  .note {
+    background: var(--teal-light);
+    border-left: 3px solid var(--teal);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 16px 0;
+    font-size: 0.84rem;
+    color: #005f6b;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  .subsec {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin: 24px 0 10px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* TABLAS */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 14px 0;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  thead { background: var(--navy); color: white; }
+  thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  tbody tr { border-top: 1px solid var(--border); }
+  td { padding: 11px 14px; vertical-align: top; color: #374151; line-height: 1.5; }
+  td:first-child { font-weight: 500; color: var(--text); }
+  .tag {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    display: inline-block;
+    letter-spacing: 0.04em;
+  }
+  .tag-si  { background: #dcfce7; color: #166534; }
+  .tag-ideal { background: #fef9c3; color: #854d0e; }
+
+  /* DECISIONES */
+  .decisions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .dec {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 16px;
+  }
+  .dec-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .dec-name.aprobar { color: #166534; }
+  .dec-name.rechazar { color: #991b1b; }
+  .dec-name.olvidar  { color: #92400e; }
+  .dec-name.bloquear { color: var(--navy); }
+  .dec p { font-size: 0.81rem; margin: 0; }
+
+  /* DERECHOS */
+  .derechos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .derecho {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 13px 15px;
+    font-size: 0.82rem;
+    color: var(--text);
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .derecho-n {
+    font-size: 0.63rem;
+    font-weight: 700;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* PILARES */
+  .pilares {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .pilar {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 18px;
+  }
+  .pilar-tag {
+    font-size: 0.63rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 5px;
+  }
+  .pilar-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 7px;
+  }
+  .pilar p { font-size: 0.8rem; margin: 0; }
+
+  /* DIVISOR */
+  .divider {
+    background: var(--navy);
+    color: white;
+    padding: 24px 28px;
+    border-radius: 10px;
+    margin: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .divider h2 {
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+  .divider h2 span { color: var(--teal); }
+  .divider p {
+    font-size: 0.76rem;
+    color: rgba(255,255,255,0.45);
+    margin: 0;
+    max-width: 280px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 0 12px; }
+    .cover-top { padding: 28px 20px; }
+    .cover-meta { padding: 14px 20px; gap: 16px; }
+    .card-header { padding: 15px 18px; }
+    .card-body { padding: 18px; }
+    .decisions, .derechos, .pilares { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="cover">
+    <div class="cover-top">
+      <div class="cover-tag">Documento interno — Politica de operacion</div>
+      <h1 class="cover-title">Human in the <span>Loop</span> (HIL)</h1>
+      <p class="cover-sub">Sistema de intervencion humana controlada para validacion de identidad y documentacion en procesos biometricos.</p>
+    </div>
+    <div class="cover-meta">
+      <div><div class="meta-label">Version</div><div class="meta-value">1.0</div></div>
+      <div><div class="meta-label">Ultima actualizacion</div><div class="meta-value">Marzo 2026</div></div>
+      <div><div class="meta-label">Aplicacion</div><div class="meta-value">Ecuador · Peru</div></div>
+      <div><div class="meta-label">Sitio web</div><div class="meta-value">www.jelou.ai</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">01</span><span class="sec-title">Objetivo</span></div>
+    <div class="card-body">
+      <p>El sistema <strong>HIL (Human in the Loop)</strong> tiene como proposito intervenir en tiempo real unicamente en los casos donde los procesos automaticos no logran validar correctamente la identidad o documentacion de un usuario.</p>
+      <p>La intervencion humana permite asistir a los usuarios que presentan dificultades durante la validacion, revisar documentos rechazados automaticamente para reducir errores, confirmar coincidencias faciales en casos limite y recuperar procesos descartados sin comprometer la seguridad.</p>
+      <div class="note">La implementacion de HIL ha demostrado un incremento aproximado del 10% en la tasa de finalizacion de los procesos.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">02</span><span class="sec-title">Activacion del sistema HIL</span></div>
+    <div class="card-body">
+      <p>Los usuarios son derivados a HIL <strong>unicamente despues de haber agotado la totalidad de los intentos configurados</strong> para la validacion biometrica. Esta derivacion se realiza exclusivamente bajo esta condicion; errores aislados, intentos fallidos individuales o inconvenientes externos dentro del flujo no generan la derivacion automatica.</p>
+      <p>Una vez derivado, el usuario recibe notificacion indicando que su caso sera revisado manualmente por un operador de HIL.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">03</span><span class="sec-title">Validacion de identidad y documentacion</span></div>
+    <div class="card-body">
+      <p>La validacion de identidad se realiza a nivel gubernamental, en la cual bases oficiales como <strong>RENIEC</strong> confirman si el documento presentado se encuentra registrado. Posteriormente, el operador de HIL valida que la persona que realizo la biometria corresponda al titular del documento, que el documento coincida con los registros oficiales y que no presente indicios de manipulacion para prevenir fraudes.</p>
+
+      <div class="subsec">3.1 Validacion de vivacidad — video</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Criterio</th><th>Obligatorio</th><th>Observacion</th></tr></thead>
+          <tbody>
+            <tr><td>Rostro centrado</td><td><span class="tag tag-si">Si</span></td><td>Visible de forma completa en camara</td></tr>
+            <tr><td>Iluminacion adecuada</td><td><span class="tag tag-si">Si</span></td><td>Sin sombras fuertes ni exposicion excesiva</td></tr>
+            <tr><td>Ojos visibles</td><td><span class="tag tag-si">Si</span></td><td>Sin gafas oscuras o de lectura</td></tr>
+            <tr><td>Codigo OTP correcto</td><td><span class="tag tag-si">Si</span></td><td>Debe coincidir con lo solicitado</td></tr>
+            <tr><td>Sin otros rostros</td><td><span class="tag tag-si">Si</span></td><td>Fondo libre de personas</td></tr>
+            <tr><td>Sincronizacion labial</td><td><span class="tag tag-si">Si</span></td><td>Movimiento de labios debe corresponder al audio</td></tr>
+            <tr><td>Calidad del video</td><td><span class="tag tag-si">Si</span></td><td>Imagen clara, sin distorsion ni pixelacion</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsec">3.2 Validacion de documento</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Criterio</th><th>Obligatorio</th><th>Observacion</th></tr></thead>
+          <tbody>
+            <tr><td>Documento completo y legible</td><td><span class="tag tag-si">Si</span></td><td>No debe estar cortado, borroso o deteriorado</td></tr>
+            <tr><td>Sin documentos rotos o tachados</td><td><span class="tag tag-si">Si</span></td><td>El documento debe estar en buen estado fisico</td></tr>
+            <tr><td>No se aceptan huellas dactilares</td><td><span class="tag tag-si">Si</span></td><td>No se valida si esta cortada o ilegible</td></tr>
+            <tr><td>Coincidencia facial</td><td><span class="tag tag-si">Si</span></td><td>Debe haber correspondencia visual con el video</td></tr>
+            <tr><td>Lectura por Regula</td><td><span class="tag tag-ideal">Ideal</span></td><td>En caso de fallo, aplicar criterio visual</td></tr>
+            <tr><td>Validacion por pais</td><td><span class="tag tag-si">Si</span></td><td>Conforme a lineamientos de Ecuador o Peru</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsec">3.3 Validacion con fuentes gubernamentales oficiales</div>
+      <p>Cuando un caso es derivado para verificacion de documento, el sistema realiza de manera automatizada una consulta contra bases de datos gubernamentales oficiales, tales como <strong>RENIEC</strong>, el <strong>Registro Civil</strong> o la <strong>Registraduria Nacional</strong>, segun el pais y la disponibilidad de la fuente.</p>
+      <p>Esta validacion tiene como finalidad verificar que la informacion registrada coincida con los datos visibles en el documento presentado, permitiendo confirmar la existencia de la identidad y la correspondencia de datos como nombres, numero de documento y demas informacion disponible en la fuente oficial.</p>
+      <p>El resultado de esta consulta forma parte del expediente del caso y sirve como insumo para la revision que realiza el operador, complementando el analisis visual del documento y fortaleciendo el proceso de validacion.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">04</span><span class="sec-title">Procedimiento de operacion</span></div>
+    <div class="card-body">
+      <p>Cuando un usuario falla los intentos configurados de validacion biometrica, el caso es derivado automaticamente a HIL y el usuario es notificado de la revision manual. El operador revisa video o foto/selfie y documento siguiendo los criterios establecidos y toma decisiones de aprobar, rechazar, bloquear u olvidar el caso segun corresponda.</p>
+      <p>Los casos se asignan por orden de llegada y el usuario espera la decision durante un tiempo determinado. En situaciones de ambiguedad, si no hay criterio claro o el formulario no aplica, <strong>se rechaza el caso despues de 10 minutos</strong>. Si un caso ingresa fuera de horario y ya ha sido gestionado, se marca como olvidado.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">05</span><span class="sec-title">Funcionalidades del sistema HIL</span></div>
+    <div class="card-body">
+      <p>El sistema permite la recepcion y asignacion automatica de casos, visualizacion del historial completo de video o foto selfie y documentos, validacion de vivacidad y documentacion, y registro automatico de las decisiones tomadas, incluyendo motivo, usuario responsable, fecha, hora y tiempo total de resolucion. Ademas, HIL garantiza control de actividad mediante <strong>credenciales unicas</strong>, <strong>doble factor de autenticacion</strong> y activacion y desactivacion del operador segun su disponibilidad.</p>
+
+      <div class="subsec">5.1 Sistema de decisiones</div>
+      <div class="decisions">
+        <div class="dec"><div class="dec-name aprobar">Aprobar</div><p>El caso cumple todas las validaciones de vivacidad y documento.</p></div>
+        <div class="dec"><div class="dec-name rechazar">Rechazar</div><p>No se superan las validaciones requeridas.</p></div>
+        <div class="dec"><div class="dec-name olvidar">Olvidar</div><p>El caso no es procesado ni aprobado. Se deja pendiente hasta que el tiempo asignado al agente expire automaticamente.</p></div>
+        <div class="dec"><div class="dec-name bloquear">Bloquear</div><p>Caso con indicios de suplantacion o irregularidades.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">06</span><span class="sec-title">Contingencias</span></div>
+    <div class="card-body">
+      <p>Cuando HIL no esta activo y se presentan inconvenientes tecnicos, el usuario no es derivado al sistema y se muestra un mensaje informativo segun las reglas del flujo.</p>
+      <p>En casos de actividad sospechosa, el operador puede <strong>bloquear el numero</strong> para prevenir intentos de suplantacion o irregularidades.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <h2>Politica de privacidad y <span>tratamiento de datos</span></h2>
+    <p>Informacion para clientes, usuarios y titulares de datos bajo el modelo HIL.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.1</span><span class="sec-title">Introduccion</span></div>
+    <div class="card-body">
+      <p>La presente Politica tiene como finalidad informar a los clientes, usuarios y terceros sobre el funcionamiento del servicio bajo el modelo HIL y la forma en que se recolectan, usan, almacenan, protegen y tratan sus datos personales. El uso de nuestros servicios implica la aceptacion expresa de los terminos establecidos en esta Politica.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.2</span><span class="sec-title">Marco legal</span></div>
+    <div class="card-body">
+      <p>El tratamiento de los datos personales se realiza conforme a la normativa vigente en materia de proteccion de datos personales. Se aplican los principios de legalidad, finalidad, libertad, veracidad, transparencia, acceso y circulacion restringida, asi como seguridad y confidencialidad, garantizando que todos los datos se gestionen de manera responsable y segura.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.3</span><span class="sec-title">Modelo Human in the Loop</span></div>
+    <div class="card-body">
+      <p>Nuestro servicio opera bajo un modelo HIL que combina procesos automatizados con intervencion humana controlada. Los procesos automaticos recopilan y gestionan la informacion inicial y, en determinados casos, personal humano autorizado revisa, valida o corrige la informacion para garantizar la calidad, seguridad y correcta ejecucion del proceso.</p>
+      <div class="note">La intervencion humana se realiza unicamente cuando es estrictamente necesaria para cumplir con estos objetivos.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.4</span><span class="sec-title">Responsable del tratamiento</span></div>
+    <div class="card-body">
+      <p>El responsable del tratamiento de los datos personales es la entidad que presta el servicio, quien define las finalidades y los medios del tratamiento de la informacion, garantizando su manejo seguro, confidencial y conforme a la ley.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.5</span><span class="sec-title">Datos personales objeto de tratamiento</span></div>
+    <div class="card-body">
+      <p>Durante la operacion del modelo HIL, el Responsable puede recolectar y tratar datos personales tales como informacion de identificacion y contacto, mensajes enviados a traves de canales digitales, imagenes y documentos compartidos por los Titulares, asi como cualquier informacion necesaria para validar y completar los procesos solicitados.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.6</span><span class="sec-title">Finalidades del tratamiento</span></div>
+    <div class="card-body">
+      <p>Los datos personales son tratados exclusivamente para ejecutar y gestionar el servicio bajo el modelo HIL, validar informacion y documentos proporcionados por los Titulares, resolver excepciones o errores de procesos automaticos, brindar soporte y seguimiento, y garantizar la seguridad, calidad y mejora continua del servicio.</p>
+      <div class="note">En ningun caso los datos seran comercializados o compartidos con terceros no autorizados.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.7</span><span class="sec-title">Acceso humano y confidencialidad</span></div>
+    <div class="card-body">
+      <p>Cuando se requiere intervencion humana, el acceso a la informacion se limita estrictamente al personal autorizado. Dicho personal actua bajo acuerdos de confidencialidad y utiliza los datos unicamente para la finalidad especifica del proceso. Todas las acciones son monitoreadas, registradas y sujetas a trazabilidad.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.8</span><span class="sec-title">Medidas de seguridad</span></div>
+    <div class="card-body">
+      <p>El Responsable implementa medidas tecnicas, administrativas y organizativas razonables para proteger los datos personales. Estas incluyen controles de acceso por roles, plataformas seguras y entornos protegidos, registro y monitoreo de accesos, asi como la conservacion de la informacion unicamente durante el tiempo necesario para cumplir con los fines del tratamiento.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.9</span><span class="sec-title">Derechos de los titulares</span></div>
+    <div class="card-body">
+      <p>Los Titulares de los datos personales tienen los siguientes derechos, gestionados a traves de los canales habilitados por el Responsable:</p>
+      <div class="derechos">
+        <div class="derecho"><span class="derecho-n">01</span>Conocer, actualizar y rectificar sus datos</div>
+        <div class="derecho"><span class="derecho-n">02</span>Solicitar prueba de la autorizacion otorgada</div>
+        <div class="derecho"><span class="derecho-n">03</span>Solicitar la supresion de sus datos cuando corresponda</div>
+        <div class="derecho"><span class="derecho-n">04</span>Revocar la autorizacion para el tratamiento de los mismos</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.10</span><span class="sec-title">Deberes del titular</span></div>
+    <div class="card-body">
+      <p>El Titular se compromete a proporcionar informacion veraz, completa y actualizada, a no suministrar datos de terceros sin autorizacion, y a utilizar los canales del servicio de manera responsable.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">P.11</span><span class="sec-title">Pilares de control del modelo HIL</span></div>
+    <div class="card-body">
+      <div class="pilares">
+        <div class="pilar">
+          <div class="pilar-tag">11.1</div>
+          <div class="pilar-title">Autenticacion</div>
+          <p>Unicamente personas debidamente identificadas pueden acceder a los sistemas, con credenciales unicas e intransferibles y mecanismos de autenticacion seguros.</p>
+        </div>
+        <div class="pilar">
+          <div class="pilar-tag">11.2</div>
+          <div class="pilar-title">Autorizacion</div>
+          <p>El acceso se concede segun el rol asignado, aplicando los principios de minimo privilegio y necesidad de acceso.</p>
+        </div>
+        <div class="pilar">
+          <div class="pilar-tag">11.3</div>
+          <div class="pilar-title">Auditoria</div>
+          <p>Control y trazabilidad de todas las acciones, incluyendo registro de accesos, revisiones, validaciones y modificaciones.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="sec-num">13</span><span class="sec-title">Vigencia y modificaciones</span></div>
+    <div class="card-body">
+      <p>La presente Politica entra en vigencia a partir de su publicacion y podra ser modificada en cualquier momento. Cualquier cambio sera informado a traves de los canales habituales.</p>
+      <p><strong>Ultima actualizacion: Marzo 2026</strong></p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
